@@ -1,0 +1,40 @@
+# Enterprise variant — Use this if your org has:
+# - Existing VPC you must deploy into
+# - Pre-created IAM roles
+# - SCP-enforced mandatory tags
+#
+# For personal accounts, use the simple cluster.yaml instead.
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: gpu-lab
+  region: us-east-1
+  version: "1.30"
+  tags:
+    application: YOUR_APP_TAG
+    creator: your-username
+    owner: your-username
+iam:
+  serviceRoleARN: "arn:aws:iam::123456789012:role/your-eks-cluster-service-role"
+vpc:
+  id: "vpc-0abc1234def56789"
+  subnets:
+    private:
+      us-east-1a:
+        id: "subnet-0aaa1111bbb2222cc"
+      us-east-1c:
+        id: "subnet-0ddd3333eee4444ff"
+
+# NOTE: If eksctl nodegroup creation fails due to SCP (EBS encryption, etc.),
+# create the nodegroup directly via AWS CLI:
+#
+# aws eks create-nodegroup \
+#   --cluster-name gpu-lab \
+#   --nodegroup-name gpu-workers \
+#   --node-role "arn:aws:iam::123456789012:role/your-node-instance-role" \
+#   --subnets subnet-0aaa1111bbb2222cc subnet-0ddd3333eee4444ff \
+#   --instance-types g4dn.xlarge \
+#   --ami-type AL2_x86_64_GPU \
+#   --scaling-config minSize=1,maxSize=1,desiredSize=1 \
+#   --disk-size 100 \
+#   --tags application=YOUR_APP_TAG,creator=your-username,owner=your-username

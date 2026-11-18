@@ -1,0 +1,14 @@
+apiVersion: eksctl.io/v1alpha5
+kind: ClusterConfig
+metadata:
+  name: gpu-lab
+  region: us-east-1
+  version: "1.30"
+managedNodeGroups:
+  - name: gpu-workers
+    instanceType: g4dn.xlarge
+    minSize: 1
+    desiredCapacity: 1
+    maxSize: 1
+    volumeSize: 100
+    amiFamily: AmazonLinux2
